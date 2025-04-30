@@ -8,4 +8,3 @@ start python chatbot.py
 REM Открытие браузера
 start http://localhost:5000
 
-pause

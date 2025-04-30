@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат с нейросетью</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Чат с нейросетью</h1>
+        <textarea id="userInput" rows="4" placeholder="Введите ваше сообщение..."></textarea><br>
+        <button onclick="sendMessage()">Отправить</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById('userInput').value;
+            const responseDiv = document.getElementById('response');
+
+            if (!message) {
+                responseDiv.innerHTML = '<strong style="color: red;">Пожалуйста, введите сообщение.</strong>';
+                return;
+            }
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                responseDiv.innerHTML = '<strong>Ответ:</strong> ' + data.response;
+            } else {
+                responseDiv.innerHTML = '<strong style="color: red;">Ошибка: не удалось получить ответ.</strong>';
+            }
+
+            // Очистка текстового поля после отправки
+            document.getElementById('userInput').value = '';
+        }
+
+        // Обработчик события нажатия клавиши
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();  // Предотвращаем переход на новую строку
+                sendMessage();  // Отправляем сообщение
+            }
+        });
+    </script>
+</body>
+</html>
